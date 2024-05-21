@@ -22,10 +22,9 @@ class TicTacToe:
         self.game_over = False
 
     def check_winner(self):
-        # Check rows, columns, and diagonals
         lines = (
-            self.board
-            + list(zip(*self.board))
+            self.board  # Rows
+            + list(zip(*self.board))  # Columns
             + [
                 [self.board[i][i] for i in range(3)],  # Diagonal
                 [self.board[i][2 - i] for i in range(3)],  # Anti-diagonal
@@ -39,20 +38,21 @@ class TicTacToe:
         return None
 
     def draw_board(self):
+        pipe = " | "
         line_separator = "- - - - - -"
         for i, row in enumerate(self.board):
-            print(" | ".join([cell if cell is not None else " " for cell in row]))
+            print(pipe.join([cell if cell is not None else " " for cell in row]))
             if i < 2:
                 print(line_separator)
 
     def make_move(self, player):
 
-        if player == "X":
+        if player == "X":  # Human
             self.draw_board()
             row, col = map(int, input("Enter row and column: ").split())
             row -= 1
             col -= 1
-        else:
+        else:  # Computer
             row, col = random.randint(0, 2), random.randint(0, 2)
             while self.board[row][col] is not None:
                 row, col = random.randint(0, 2), random.randint(0, 2)
@@ -65,6 +65,7 @@ class TicTacToe:
                 self.make_move("X")
 
     def play_game(self):
+
         while not self.game_over:
             winner = self.check_winner()
 
@@ -78,6 +79,11 @@ class TicTacToe:
 
             self.make_move(self.order[0])
             self.order.reverse()
+
+    def reset(self):
+        self.board = [[None] * 3 for _ in range(3)]
+        self.order = ["X", "O"] if random.choice([True, False]) else ["O", "X"]
+        self.game_over = False
 
 
 ###
