@@ -3,8 +3,7 @@
 # Date : 15 Feb 2025
 
 import pygame
-from settings import WIDTH, HEIGHT, WHITE, BLACK, FPS
-from scores import get_leaderboard
+from settings import WIDTH, HEIGHT, WHITE, BLACK
 
 
 class Menu:
@@ -12,7 +11,6 @@ class Menu:
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.font = pygame.font.Font(None, 35)
-        self.leaderboard = get_leaderboard()
 
     def draw_text(self, text, x, y):
         text_surface = self.font.render(text, True, WHITE)
@@ -30,14 +28,7 @@ class Menu:
             self.draw_text("Press 2 for Multiplayer", WIDTH // 2, HEIGHT // 2 + 50)
             self.draw_text("Press Q to Quit", WIDTH // 2, HEIGHT // 2 + 100)
 
-            self.draw_text("Leaderboard :", WIDTH // 2, HEIGHT // 2 + 125)
-
-            for i, (player, score) in enumerate(self.leaderboard[:5]):
-                self.draw_text(
-                    f"{i+1}. {player}: {score} victoires",
-                    WIDTH // 2,
-                    HEIGHT // 2 + 150 + (i + 1) * 30,
-                )
+            self.draw_text("Best :", WIDTH // 2, HEIGHT // 2 + 150)
 
             pygame.display.flip()
 

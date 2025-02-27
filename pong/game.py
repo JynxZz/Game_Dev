@@ -1,5 +1,5 @@
 import pygame
-from settings import WIDTH, HEIGHT, BLACK, WHITE, WINNING_SCORE
+from settings import WIDTH, HEIGHT, BLACK, WHITE, WINNING_SCORE, FPS
 from paddle import Paddle
 from ball import Ball
 from scores import save_scores
@@ -28,19 +28,20 @@ class Pong:
         self.score_left = 0
         self.score_right = 0
         self.ball.reset()
+        self.run()
 
     def draw_text(self, text, x, y):
         """Affiche un texte sur l'écran"""
         text_surface = self.font.render(text, True, WHITE)
-        self.screen.blit(text_surface, (x, y))
+        text_rect = text_surface.get_rect(center=(x, y))
+        self.screen.blit(text_surface, text_rect)
 
     def run(self):
         while self.running:
             self.handle_events()
             self.update()
             self.draw()
-            self.clock.tick(60)
-        self.get_user_name()
+            self.clock.tick(FPS)
         self.show_end_screen()
 
     def handle_events(self):
@@ -87,11 +88,8 @@ class Pong:
         # Vérification de la victoire
         if self.score_left >= WINNING_SCORE:
             self.running = False
-            save_scores("Player 1")
         elif self.score_right >= WINNING_SCORE:
-            winner = "Player 2" if self.mode == "2P" else "AI"
             self.running = False
-            save_scores(winner)
 
     def draw(self):
         """Affichage des objets"""
@@ -115,6 +113,8 @@ class Pong:
         self.draw_text(f"{winner} a gagné !", WIDTH // 2 - 100, HEIGHT // 3)
         self.draw_text("Insert UserName", WIDTH // 2 - 150, HEIGHT // 3)
         pygame.display.flip()
+        if self.mode == "AI":
+            return "AI"
 
         name = ""
         while True:
@@ -128,6 +128,8 @@ class Pong:
                         return name
                     elif event.key == pygame.K_BACKSPACE:
                         name = name[:-1]
+                    elif event.key == pygame.K_ESCAPE:
+                        return name
                     else:
                         name += event.unicode
             pygame.display.flip()
@@ -135,14 +137,13 @@ class Pong:
             self.screen.fill(BLACK)
             self.draw_text(name, WIDTH // 2 - 200, HEIGHT // 2)
             pygame.display.flip()
+            return name
 
     def show_end_screen(self):
         self.screen.fill(BLACK)
 
-        self.draw_text("Appuyez sur ESPACE pour rejouer", WIDTH // 2 - 150, HEIGHT // 2)
-        self.draw_text(
-            "Appuyez sur ESC pour quitter", WIDTH // 2 - 150, HEIGHT // 2 + 50
-        )
+        self.draw_text("ESPACE pour rejouer", WIDTH // 2, HEIGHT // 2)
+        self.draw_text("ESC pour quitter", WIDTH // 2, HEIGHT // 2 + 50)
 
         pygame.display.flip()
 
@@ -155,7 +156,8 @@ class Pong:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.reset()
-                        self.run()
+                        waiting = False
+
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         exit()

@@ -8,7 +8,7 @@ from settings import SCORES_FILE
 
 def load_scores():
     if not os.path.exists(SCORES_FILE):
-        return {"1P": 0, "2P": 0, "AI": 0}
+        return {}
 
     with open(SCORES_FILE, "r") as file:
         lines = file.readlines()
@@ -31,8 +31,3 @@ def save_scores(winner):
     with open(SCORES_FILE, "w") as file:
         for player, score in scores.items():
             file.write(f"{player}: {score}\n")
-
-
-def get_leaderboard():
-    scores = load_scores()
-    return sorted(scores.items(), key=lambda x: x[1], reverse=True)
